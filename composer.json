@@ -1,35 +1,41 @@
 {
-	"name": "tas2580/failedlogins",
+	"name": "mot/failedlogins",
 	"type": "phpbb-extension",
-	"description": "Log failed logins into user log and display a message to the user.",
-	"homepage": "https://tas2580.net/downloads/phpbb-failed-logins/",
-	"version": "1.1.0",
+	"description": "Log and count failed logins into the user log and display a message to the user.",
+	"homepage": "https://www.mike-on-tour.com",
+	"version": "2.0.0",
+	"time": "2025-03-03 12:11:57",
 	"keywords": ["phpbb", "extension", "login", "security", "fail"],
-	"license": "GPL-2.0",
+	"license": "GPL-2.0-only",
 	"authors": [
 		{
-			"name": "tas2580",
-			"email": "mail@tas2580.net",
-			"homepage": "https://tas2580.net",
+			"name": "Michael Vormwald (Mike-on-Tour)",
+			"email": "webmaster@mike-on-tour.de",
+			"homepage": "https://www.mike-on-tour.com",
 			"role": "Developer"
+		},
+		{
+			"name": "tas2580",
+			"role": "Former Developer"
 		}
 	],
 	"require": {
-		"php": ">=5.3.3",
+		"php": ">=7.4.33,<8.5.0@dev",
+        "phpbb/phpbb": ">=3.3,<3.4.0@dev",
 		"composer/installers": "~1.0"
 	},
 	"require-dev": {
 		"phpbb/epv": "dev-master"
 	},
 	"extra": {
-		"display-name": "tas2580 Failed logins",
+		"display-name": "Failed Logins",
 		"soft-require": {
-			"phpbb/phpbb": ">=3.1.4-RC1,<3.2.0@dev"
+			"phpbb/phpbb": ">=3.3.0,<3.4.0@dev"
 		},
 		"version-check": {
-			"host": "phpbb-versionscheck.cf",
-			"directory": "/tas2580/failedlogins/master",
-			"filename": "version-check.json"
+			"host": "www.mike-on-tour.com",
+			"directory": "/mot",
+			"filename": "mot_failedlogins.json"
 		}
 	}
 }

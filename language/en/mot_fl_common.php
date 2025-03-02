@@ -1,8 +1,8 @@
 <?php
 /**
 *
-* @package phpBB Extension - tas2580 Failed logins
-* @copyright (c) 2015 tas2580 (https://tas2580.net)
+* @package MoT Failed Logins v2.0.0
+* @copyright (c) 2025 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
@@ -14,7 +14,7 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
 // DEVELOPERS PLEASE NOTE
 //
@@ -31,10 +31,12 @@ if (empty($lang) || !is_array($lang))
 // Some characters you may want to copy&paste:
 // ’ » “ ” …
 //
-$lang = array_merge($lang, array(
-	'FAILED_LOGINS_COUNT'		=> 'Seit deinem letzten Besuch gab es %d fehlgeschlagene Loginversuche!',
-	'ONE_FAILED_LOGIN'			=> 'Seit deinem letzten Besuch gab es einen fehlgeschlagenen Loginversuch!',
-	'TRY_TO_LOGIN_FAIL'		=> '<strong>Anmeldung fehlgeschlagen</strong><br />» Benutzername: %s',
-	'REMOVE_MESSAGE'			=> 'Meldung entfernen',
-	'REMOVED_FAILED_LOGINS'	=> 'Die fehlgeschlagenen Logins seit deinem letzten besuch werden jetzt nicht mehr angezeigt.'
-));
+$lang = array_merge($lang, [
+	'MOT_FL_MSG'			=> [
+		1		=> 'There was one failed login attempt since your last visit!',
+		2		=> 'There were %1$d failed login attempts since your last visit!',
+	],
+	'MOT_FL_LOG_FAIL'		=> '<strong>Failed login attempt</strong><br>» Username: %s',
+	'MOT_FL_REMOVE_MSG'		=> 'Delete message',
+	'MOT_FL_REMOVED'		=> 'The failed login attempts since your your last visit will no longer be displayed.'
+]);

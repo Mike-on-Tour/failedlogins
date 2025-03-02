@@ -1,14 +1,13 @@
 <?php
-
 /**
- *
- * @package phpBB Extension - tas2580 Failed logins
- * @copyright (c) 2015 tas2580 (https://tas2580.net)
- * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
- *
- */
+*
+* @package MoT Failed Logins v2.0.0
+* @copyright (c) 2025 Mike-on-Tour
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+*
+*/
 
-namespace tas2580\failedlogins\event;
+namespace mot\failedlogins\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -17,6 +16,17 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class listener implements EventSubscriberInterface
 {
+	/** @var \phpbb\db\driver\driver */
+	protected $db;
+
+	/** @var \phpbb\language\language $language */
+	protected $language;
+
+	/** @var \phpbb\log\log */
+	protected $log;
+
+	/** @var \phpbb\request\request */
+	protected $request;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -24,117 +34,87 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\user\user */
 	protected $user;
 
-	/** @var \phpbb\db\driver\driver */
-	protected $db;
-
-	/** @var \phpbb\request\request */
-	protected $request;
-
-	/** @var \phpbb\log\log */
-	protected $log;
-
-	/**
-	 * Constructor
-	 *
-	 * @param \phpbb\template\template	$template
-	 * @param \phpbb\user				$user
-	 * @param \phpbb\db\driver\driver		$db
-	 * @param \phpbb\request\request		$request
-	 * @access public
-	 */
-	public function __construct(\phpbb\template\template $template, \phpbb\user $user, \phpbb\db\driver\driver_interface $db, \phpbb\request\request $request, \phpbb\log\log $log)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\language\language $language, \phpbb\log\log $log, \phpbb\request\request $request,
+								\phpbb\template\template $template, \phpbb\user $user)
 	{
+		$this->db = $db;
+		$this->language = $language;
+		$this->log = $log;
+		$this->request = $request;
 		$this->template = $template;
 		$this->user = $user;
-		$this->db = $db;
-		$this->request = $request;
-		$this->log = $log;
 	}
 
-	/**
-	 * Assign functions defined in this class to event listeners in the core
-	 *
-	 * @return array
-	 * @static
-	 * @access public
-	 */
-	static public function getSubscribedEvents()
+	public static function getSubscribedEvents()
 	{
-		return array(
-			'core.user_setup'		=> 'user_setup',
-			'core.login_box_failed'	=> 'login_box_failed',
+		return [
+			'core.user_setup'			=> 'load_language_on_setup',
+			'core.login_box_failed'		=> 'login_box_failed',
 			'core.login_box_redirect'	=> 'login_box_redirect',
-			'core.page_footer'		=> 'page_footer',
-		);
+			'core.page_footer'			=> 'page_footer',
+		];
 	}
 
 	/**
 	 * Add language on user setup
 	 *
-	 * @param object $event The event object
-	 * @return null
-	 * @access public
 	 */
-	public function user_setup($event)
+	public function load_language_on_setup()
 	{
-		$this->user->add_lang_ext('tas2580/failedlogins', 'common');
+		$this->language->add_lang('mot_fl_common', 'mot/failedlogins');
 	}
 
 	/**
-	 * If login failed set the conter +1
+	 * If login failed increment the counter
 	 *
-	 * @param object $event The event object
-	 * @return null
-	 * @access public
+	 * @param	object	$event	The event object
+	 *
 	 */
 	public function login_box_failed($event)
 	{
-		// Set the counter +1
-		$sql = 'UPDATE ' . USERS_TABLE . " SET failed_logins_count = failed_logins_count + 1
-			WHERE username_clean = '" . $this->db->sql_escape(utf8_clean_string($event['username'])) . "'";
+		// Increment counter
+		$sql = 'UPDATE ' . USERS_TABLE . '
+				SET mot_failed_logins_count = mot_failed_logins_count + 1
+				WHERE user_id = ' . (int) $event['result']['user_row']['user_id'];
 		$this->db->sql_query($sql);
 
 		// Add to user log
-		$this->log->add('user', ANONYMOUS, $this->user->ip, 'TRY_TO_LOGIN_FAIL', time(), array(
+		$this->log->add('user', ANONYMOUS, $this->user->ip, 'MOT_FL_LOG_FAIL', time(), [
 			'reportee_id'	=> ANONYMOUS,
-			'username'	=> $event['username'],
-		));
+			'username'		=> $event['username'],
+		]);
 	}
 
 	/**
-	 * Update filed logins to failed_logins_count_last and clear failed_logins_count on login
+	 * Update failed logins to mot_failed_logins_count_last and clear mot_failed_logins_count on login
+	 * NOTE: This event will be triggered with every login, so a message about failed logins will be erased even at the next login even if the "Remove message" button has not been activated!!!
 	 *
-	 * @param object $event The event object
-	 * @return null
-	 * @access public
 	 */
-	public function login_box_redirect($event)
+	public function login_box_redirect()
 	{
-		$sql = 'UPDATE ' . USERS_TABLE . ' SET failed_logins_count_last = failed_logins_count, failed_logins_count = 0
+		$sql = 'UPDATE ' . USERS_TABLE . ' SET mot_failed_logins_count_last = mot_failed_logins_count, mot_failed_logins_count = 0
 			WHERE user_id = ' . (int) $this->user->data['user_id'];
 		$this->db->sql_query($sql);
 	}
 
 	/**
-	 * Display message to the user if there where failed login trys
+	 * Display message to the user if there were failed login attempts
 	 *
-	 * @param object $event The event object
-	 * @return null
-	 * @access public
 	 */
-	public function page_footer($event)
+	public function page_footer()
 	{
-		// clear failed_logins_count_last on user action
-		if ($this->request->is_set('failedlogins_remove'))
+		// clear mot_failed_logins_count_last on user action
+		$submit = $this->request->is_set('failedlogins_remove');
+		if ($submit)
 		{
 			if (check_form_key('failedlogins_remove'))
 			{
-				$sql = 'UPDATE ' . USERS_TABLE . ' SET failed_logins_count_last = 0
+				$sql = 'UPDATE ' . USERS_TABLE . ' SET mot_failed_logins_count_last = 0
 					WHERE user_id = ' . (int) $this->user->data['user_id'];
 				$this->db->sql_query($sql);
 				if ($this->request->is_ajax())
 				{
-					trigger_error('REMOVED_FAILED_LOGINS');
+					trigger_error('MOT_FL_REMOVED');
 				}
 			}
 			else
@@ -147,13 +127,13 @@ class listener implements EventSubscriberInterface
 		}
 
 		// Display failed logins
-		if ($this->user->data['failed_logins_count_last'] > 0)
+		if ($this->user->data['mot_failed_logins_count_last'])
 		{
 			add_form_key('failedlogins_remove');
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'U_REMOVE_MESSAGE'	=> generate_board_url() . '/' . $this->user->page['page'],
-				'FAILED_LOGINS'		=> ($this->user->data['failed_logins_count_last'] == 1) ? $this->user->lang['ONE_FAILED_LOGIN'] : sprintf($this->user->lang['FAILED_LOGINS_COUNT'], $this->user->data['failed_logins_count_last']),
-			));
+				'FAILED_LOGINS'		=> (int) $this->user->data['mot_failed_logins_count_last'],
+			]);
 		}
 	}
 }

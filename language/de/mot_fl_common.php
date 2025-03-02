@@ -1,17 +1,12 @@
 <?php
 /**
 *
-* Failed logins extension for the phpBB Forum Software package.
-* French translation by Galixte (http://www.galixte.com)
-*
-* @copyright (c) 2015 tas2580 <https://tas2580.net>
+* @package MoT Failed Logins v2.0.0
+* @copyright (c) 2025 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
 
-/**
-* DO NOT CHANGE
-*/
 if (!defined('IN_PHPBB'))
 {
 	exit;
@@ -19,9 +14,8 @@ if (!defined('IN_PHPBB'))
 
 if (empty($lang) || !is_array($lang))
 {
-	$lang = array();
+	$lang = [];
 }
-
 // DEVELOPERS PLEASE NOTE
 //
 // All language files should use UTF-8 as their encoding and the files must not contain a BOM.
@@ -35,13 +29,14 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 //
 // Some characters you may want to copy&paste:
-// ’ « » “ ” …
+// ’ » “ ” …
 //
-
-$lang = array_merge($lang, array(
-	'FAILED_LOGINS_COUNT'		=> 'Depuis votre dernière visite il y a eu %d tentatives de connexion qui ont échoué !',
-	'ONE_FAILED_LOGIN'			=> 'Depuis votre dernière visite il y a eu une tentative de connexion qui a échoué !',
-	'TRY_TO_LOGIN_FAIL'		=> '<strong>Échec de la connexion</strong><br />» Nom d’utilisateur : %s',
-	'REMOVE_MESSAGE'			=> 'Masquer le message',
-	'REMOVED_FAILED_LOGINS'	=> 'Les tentatives de connexion ayant échoué depuis votre dernière visite ne seront plus affichées.'
-));
+$lang = array_merge($lang, [
+	'MOT_FL_MSG'			=> [
+		1		=> 'Seit deinem letzten Besuch gab es einen fehlgeschlagenen Loginversuch!',
+		2		=> 'Seit deinem letzten Besuch gab es %1$d fehlgeschlagene Loginversuche!',
+	],
+	'MOT_FL_LOG_FAIL'		=> '<strong>Anmeldung fehlgeschlagen</strong><br>» Benutzername: %s',
+	'MOT_FL_REMOVE_MSG'		=> 'Meldung entfernen',
+	'MOT_FL_REMOVED'		=> 'Die fehlgeschlagenen Logins seit deinem letzten Besuch werden jetzt nicht mehr angezeigt.'
+]);

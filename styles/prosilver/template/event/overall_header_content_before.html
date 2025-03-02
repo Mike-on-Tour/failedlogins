@@ -1,10 +1,20 @@
-<!-- IF FAILED_LOGINS -->
+{#
+*
+* @package MoT Failed Logins v2.0.0
+* @copyright (c) 2025 Mike-on-Tour
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+*
+#}
+
+{% if FAILED_LOGINS %}
 <div class="rules" id="failedlogins">
-	<div class="inner">{FAILED_LOGINS}<br /><br />
-		<form action="{U_REMOVE_MESSAGE}" method="POST" data-ajax="failedlogins.remove">
-			<input class="button2" type="submit" name="failedlogins_remove" value="{L_REMOVE_MESSAGE}" />
-			{S_FORM_TOKEN}
+	<div class="inner">
+		{{ lang('MOT_FL_MSG', FAILED_LOGINS) }}
+		<br><br>
+		<form action="{{ U_REMOVE_MESSAGE }}" method="POST" data-ajax="failedlogins.remove">
+			<input class="button2" type="submit" name="failedlogins_remove" value="{{ lang('MOT_FL_REMOVE_MSG') }}">
+			{{ S_FORM_TOKEN }}
 		</form>
 	</div>
 </div>
-<!-- ENDIF -->
+{% endif %}
