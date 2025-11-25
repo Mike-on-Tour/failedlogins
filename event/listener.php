@@ -1,7 +1,7 @@
 <?php
 /**
 *
-* @package MoT Failed Logins v2.1.0
+* @package MoT Failed Logins v2.2.0
 * @copyright (c) 2025 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
@@ -16,28 +16,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class listener implements EventSubscriberInterface
 {
-	/** @var \phpbb\db\driver\driver */
-	protected $db;
-
-	/** @var \phpbb\log\log */
-	protected $log;
-
-	/** @var \phpbb\request\request */
-	protected $request;
-
-	/** @var \phpbb\template\template */
-	protected $template;
-
-	/** @var \phpbb\user\user */
-	protected $user;
-
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\log\log $log, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(protected \phpbb\db\driver\driver_interface $db, protected \phpbb\log\log $log, protected \phpbb\request\request $request, protected \phpbb\template\template $template,
+								protected \phpbb\user $user)
 	{
-		$this->db = $db;
-		$this->log = $log;
-		$this->request = $request;
-		$this->template = $template;
-		$this->user = $user;
 	}
 
 	public static function getSubscribedEvents()
@@ -67,12 +48,10 @@ class listener implements EventSubscriberInterface
 	/**
 	 * If login failed increment the counter
 	 *
-	 * @param	object	$event	The event object
-	 *
 	 */
 	public function login_box_failed(object $event)
 	{
-		if ($event['result']['user_row']['user_id'] > 1)
+		if (isset($event['result']['user_row']) && $event['result']['user_row']['user_id'] > 1)
 		{
 			// Increment counter
 			$sql = 'UPDATE ' . USERS_TABLE . '

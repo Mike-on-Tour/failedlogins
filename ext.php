@@ -1,7 +1,7 @@
 <?php
 /**
 *
-* @package MoT Failed Logins v2.1.0
+* @package MoT Failed Logins v2.2.0
 * @copyright (c) 2025 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
@@ -14,7 +14,7 @@ class ext extends \phpbb\extension\base
 	protected $phpbb_min_ver = '3.3.5';
 	protected $phpbb_below_ver = '3.4.0@dev';
 	protected $php_min_ver = '8.0.30';
-	protected $php_below_ver = '8.5.0@dev';
+	protected $php_below_ver = '8.6.0@dev';
 
 	public function is_enableable()
 	{
