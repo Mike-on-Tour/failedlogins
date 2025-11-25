@@ -7,14 +7,14 @@
 #}
 
 {% if FAILED_LOGINS %}
-<div class="rules" id="failedlogins">
-	<div class="inner">
-		{{ lang('MOT_FL_MSG', FAILED_LOGINS) }}
-		<br><br>
-		<form action="{{ U_REMOVE_MESSAGE }}" method="POST" data-ajax="failedlogins.remove">
-			<input class="button2" type="submit" name="failedlogins_remove" value="{{ lang('MOT_FL_REMOVE_MSG') }}">
-			{{ S_FORM_TOKEN }}
-		</form>
+	<div class="rules" id="failedlogins">
+		<div class="inner">
+			{{ lang('MOT_FL_MSG', FAILED_LOGINS) }}
+			<br><br>
+			<form action="{{ U_REMOVE_MESSAGE }}" method="POST" data-ajax="failedlogins.remove">
+				<input class="button2" type="submit" name="failedlogins_remove" value="{{ lang('MOT_FL_REMOVE_MSG') }}">
+				{{ S_FORM_TOKEN }}
+			</form>
+		</div>
 	</div>
-</div>
 {% endif %}

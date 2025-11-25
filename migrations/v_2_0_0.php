@@ -2,7 +2,7 @@
 /**
 *
 * @package MoT Failed Logins v2.0.0
-* @copyright (c) 2023 Mike-on-Tour
+* @copyright (c) 2025 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */

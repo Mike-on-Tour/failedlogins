@@ -1,7 +1,7 @@
 <?php
 /**
 *
-* @package MoT Failed Logins v2.0.0
+* @package MoT Failed Logins v2.1.0
 * @copyright (c) 2025 Mike-on-Tour
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
@@ -19,9 +19,6 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\db\driver\driver */
 	protected $db;
 
-	/** @var \phpbb\language\language $language */
-	protected $language;
-
 	/** @var \phpbb\log\log */
 	protected $log;
 
@@ -34,11 +31,9 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\user\user */
 	protected $user;
 
-	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\language\language $language, \phpbb\log\log $log, \phpbb\request\request $request,
-								\phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\db\driver\driver_interface $db, \phpbb\log\log $log, \phpbb\request\request $request, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->db = $db;
-		$this->language = $language;
 		$this->log = $log;
 		$this->request = $request;
 		$this->template = $template;
@@ -59,9 +54,14 @@ class listener implements EventSubscriberInterface
 	 * Add language on user setup
 	 *
 	 */
-	public function load_language_on_setup()
+	public function load_language_on_setup(object $event)
 	{
-		$this->language->add_lang('mot_fl_common', 'mot/failedlogins');
+		$lang_set_ext = $event['lang_set_ext'];
+		$lang_set_ext[] = array(
+			'ext_name' => 'mot/failedlogins',
+			'lang_set' => 'mot_fl_common',
+		);
+		$event['lang_set_ext'] = $lang_set_ext;
 	}
 
 	/**
@@ -70,24 +70,27 @@ class listener implements EventSubscriberInterface
 	 * @param	object	$event	The event object
 	 *
 	 */
-	public function login_box_failed($event)
+	public function login_box_failed(object $event)
 	{
-		// Increment counter
-		$sql = 'UPDATE ' . USERS_TABLE . '
-				SET mot_failed_logins_count = mot_failed_logins_count + 1
-				WHERE user_id = ' . (int) $event['result']['user_row']['user_id'];
-		$this->db->sql_query($sql);
+		if ($event['result']['user_row']['user_id'] > 1)
+		{
+			// Increment counter
+			$sql = 'UPDATE ' . USERS_TABLE . '
+					SET mot_failed_logins_count = mot_failed_logins_count + 1
+					WHERE user_id = ' . (int) $event['result']['user_row']['user_id'];
+			$this->db->sql_query($sql);
 
-		// Add to user log
-		$this->log->add('user', ANONYMOUS, $this->user->ip, 'MOT_FL_LOG_FAIL', time(), [
-			'reportee_id'	=> ANONYMOUS,
-			'username'		=> $event['username'],
-		]);
+			// Add to user log
+			$this->log->add('user', ANONYMOUS, $this->user->ip, 'MOT_FL_LOG_FAIL', time(), [
+				'reportee_id'	=> ANONYMOUS,
+				'username'		=> $event['username'],
+			]);
+		}
 	}
 
 	/**
 	 * Update failed logins to mot_failed_logins_count_last and clear mot_failed_logins_count on login
-	 * NOTE: This event will be triggered with every login, so a message about failed logins will be erased even at the next login even if the "Remove message" button has not been activated!!!
+	 * NOTE: This event will be triggered with every login, so a message about failed logins will be erased at the next login even if the "Remove message" button has not been activated!!!
 	 *
 	 */
 	public function login_box_redirect()

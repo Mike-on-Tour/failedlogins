@@ -3,7 +3,6 @@ services:
         class: mot\failedlogins\event\listener
         arguments:
             - '@dbal.conn'
-            - '@language'
             - '@log'
             - '@request'
             - '@template'

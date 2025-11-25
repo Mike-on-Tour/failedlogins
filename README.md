@@ -1,17 +1,17 @@
 # Failed Logins
 
-![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-green)  
+![Version: 2.1.0](https://img.shields.io/badge/Version-2.1.0-green)  
   
-![phpBB 3.3.x Compatible](https://img.shields.io/badge/phpBB-3.3.x%20Compatible-009BDF)  
+![phpBB >= 3.3.5 Compatible](https://img.shields.io/badge/phpBB->=%203.3.5%20Compatible-009BDF)  
 
-![PHP >= 7.4.33, < 8.5.0](https://img.shields.io/badge/PHP->=7.4.33,%20<8.5.0-blueviolet)
+![PHP >= 8.0.30, < 8.5.0](https://img.shields.io/badge/PHP->=%208.0.30,%20<%208.5.0-blueviolet)
 
-![Build Status](https://github.com/Mike-on-Tour/failedlogins/workflows/Tests/badge.svg)](https://github.com/Mike-on-Tour/failedlogins/actions)
+[![Build Status](https://github.com/Mike-on-Tour/failedlogins/workflows/Tests/badge.svg)](https://github.com/Mike-on-Tour/failedlogins/actions)
 
 ## Description
 This extension detects and counts failed login attempts for a user and logs each failed attempt in the user log.  
-At the next successful login the user will be notified of the number of failed login attempts with a message box which includes a button to remove it. The counted failed attempts
-will the be deleted from the user's data; this will also happen at the next successful login if the remove button has not been activated.
+At the next successful login the user will be notified about the number of failed login attempts with a message box which includes a button to remove it. The counted failed attempts
+will then be deleted from the user's data; this will also happen at the next successful login if the remove button has not been activated.
   
 *Note to the administrator:* This extension does not have any settings in the ACP!
     
